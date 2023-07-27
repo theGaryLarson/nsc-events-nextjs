@@ -45,7 +45,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git push origin staging
+#          git push origin staging
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
