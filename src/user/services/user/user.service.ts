@@ -1,6 +1,6 @@
 import { Injectable, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from '../../dtos/CreateUser.dto';
-import { User } from '../../types/User';
+import { User } from '../../types';
 
 @Injectable()
 export class UserService {
