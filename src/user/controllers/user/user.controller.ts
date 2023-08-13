@@ -1,21 +1,25 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpException,
   HttpStatus,
+  Inject,
   Param,
   ParseIntPipe,
   Post,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from '../../services/user/user.service';
 import { CreateUserDto } from '../../dtos/CreateUser.dto';
+import { SerializedUser } from '../../types';
 // TODO: handle authentication here within controllers. Service layer is where business logic happens
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(@Inject('USER_SERVICE') private userService: UserService) {}
   @Get('/search/:id')
   findUserById(@Param('id', ParseIntPipe) id: number) {
     const user = this.userService.findUserById(id);
@@ -23,9 +27,12 @@ export class UserController {
     else throw new HttpException('User not found!', HttpStatus.BAD_REQUEST);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor) // must include this decorator for Serialization
   @Get('')
   getAllUsers() {
-    return this.userService.getUsers();
+    const users = this.userService.getUsers();
+    if (users) return users.map((user) => new SerializedUser(user));
+    else throw new HttpException('Users not found!', HttpStatus.BAD_REQUEST);
   }
 
   @Post('create')
